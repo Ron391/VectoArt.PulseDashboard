@@ -1,0 +1,6 @@
+<Application x:Class="PulseDashboard.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- No StartupUri on purpose: App.xaml.cs decides which window to open (the before argument shows the stock version). -->
+    <Application.Resources />
+</Application>

@@ -1,0 +1,42 @@
+<div class="donut-wrap">
+    <div class="donut">
+        <svg viewBox="0 0 42 42" role="img" aria-label="Traffic by channel">
+            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#243648" stroke-width="5" />
+            @{
+                // A circle with r = 15.915 has a circumference of exactly 100,
+                // so a stroke-dasharray of "30 70" draws a 30 percent slice. No trigonometry needed.
+                var offset = 25.0; // start at 12 o'clock
+            }
+            @foreach (var c in Channels)
+            {
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="@c.Color" stroke-width="5"
+                        stroke-dasharray="@ChartMath.Num(c.Percent) @ChartMath.Num(100 - c.Percent)"
+                        stroke-dashoffset="@ChartMath.Num(offset)" />
+                offset -= c.Percent;
+            }
+        </svg>
+        <div class="donut-center">
+            <strong>@CenterValue</strong>
+            <span>@CenterLabel</span>
+        </div>
+    </div>
+
+    <ul class="legend">
+        @foreach (var c in Channels)
+        {
+            <li>
+                <span class="swatch" style="background:@c.Color"></span>
+                <span>@c.Name</span>
+                <span class="muted">@c.Percent.ToString("0.0", CultureInfo.InvariantCulture)%</span>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<ChannelShare> Channels { get; set; } = Array.Empty<ChannelShare>();
+
+    [Parameter] public string CenterValue { get; set; } = string.Empty;
+
+    [Parameter] public string CenterLabel { get; set; } = string.Empty;
+}

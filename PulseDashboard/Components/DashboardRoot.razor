@@ -1,0 +1,131 @@
+@implements IDisposable
+@inject DashboardService Dashboard
+@inject IFileExportService Exporter
+
+@{
+    // One snapshot per render: every card below shows the same instant in time.
+    var s = Dashboard.Current;
+}
+
+<div class="shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">Pulse</span>
+        </div>
+
+        <nav class="nav">
+            <button class="nav-item @Active(Page.Overview)" @onclick="() => Go(Page.Overview)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" /></svg>
+                Overview
+            </button>
+            <button class="nav-item @Active(Page.Servers)" @onclick="() => Go(Page.Servers)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v6H4V4zm0 10h16v6H4v-6zm3-7v1h2V7H7zm0 10v1h2v-1H7z" /></svg>
+                Servers
+            </button>
+            <button class="nav-item @Active(Page.Activity)" @onclick="() => Go(Page.Activity)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                Activity
+            </button>
+        </nav>
+
+        <div class="sidebar-foot">
+            <span class="live-dot"></span> Live · updated @s.UpdatedAt.ToString("HH:mm:ss", CultureInfo.InvariantCulture)
+        </div>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <div>
+                <h1>@_page</h1>
+                <p class="muted">WPF window · Blazor UI · one shared C# service</p>
+            </div>
+            <button class="btn" @onclick="ExportAsync">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                Export CSV
+            </button>
+        </header>
+
+        @switch (_page)
+        {
+            case Page.Overview:
+                <section class="kpi-grid">
+                    @foreach (var kpi in s.Kpis)
+                    {
+                        <KpiCard Metric="kpi" @key="kpi.Label" />
+                    }
+                </section>
+
+                <section class="row row-chart">
+                    <article class="card">
+                        <header class="card-head"><h2>Requests per second</h2><span class="muted">last 72 s</span></header>
+                        <LineChart Values="s.Traffic" />
+                    </article>
+                    <article class="card">
+                        <header class="card-head"><h2>Traffic by channel</h2></header>
+                        <DonutChart Channels="s.Channels" CenterValue="@s.Kpis[1].Value" CenterLabel="active users" />
+                    </article>
+                </section>
+
+                <section class="row row-table">
+                    <article class="card">
+                        <header class="card-head"><h2>Servers</h2></header>
+                        <ServerTable Servers="s.Servers" />
+                    </article>
+                    <article class="card">
+                        <header class="card-head"><h2>Recent activity</h2></header>
+                        <ActivityFeed Items="s.Activity" />
+                    </article>
+                </section>
+                break;
+
+            case Page.Servers:
+                <article class="card">
+                    <ServerTable Servers="s.Servers" />
+                </article>
+                break;
+
+            case Page.Activity:
+                <article class="card">
+                    <ActivityFeed Items="s.Activity" />
+                </article>
+                break;
+        }
+    </main>
+
+    @if (_toast is not null)
+    {
+        <div class="toast" role="status">@_toast</div>
+    }
+</div>
+
+@code {
+    private enum Page { Overview, Servers, Activity }
+
+    private Page _page = Page.Overview;
+    private string? _toast;
+
+    protected override void OnInitialized() => Dashboard.Updated += OnDashboardUpdated;
+
+    // ARCH 3 — The service fires on a background thread. InvokeAsync hops back onto the Blazor
+    // renderer's context; calling StateHasChanged directly from the wrong thread is a classic crash.
+    private void OnDashboardUpdated() => _ = InvokeAsync(StateHasChanged);
+
+    private void Go(Page page) => _page = page;
+
+    private string Active(Page page) => _page == page ? "active" : string.Empty;
+
+    // ARCH 5 — Razor calls an interface; WPF answers with a native Save dialog.
+    private async Task ExportAsync()
+    {
+        var path = await Exporter.SaveTextAsync($"pulse-servers-{DateTime.Now:yyyyMMdd-HHmm}.csv", Dashboard.ToCsv());
+        if (path is null) return;
+
+        _toast = $"Saved to {path}";
+        StateHasChanged();
+        await Task.Delay(3500);
+        _toast = null;
+    }
+
+    public void Dispose() => Dashboard.Updated -= OnDashboardUpdated;
+}

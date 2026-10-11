@@ -1,0 +1,33 @@
+/* ==========================================================================
+   THEME — every colour, font and size lives here as a CSS variable.
+   ARCH 6: Change a value in this one file and the whole dashboard follows.
+   This is the web version of a WPF ResourceDictionary.
+   ========================================================================== */
+:root {
+    color-scheme: dark;                 /* dark scrollbars, form controls and selection */
+
+    /* Surfaces — InventoryPro navy family */
+    --bg:         #0F1923;              /* page background */
+    --surface:    #152330;              /* cards */
+    --surface-2:  #1B2D3D;              /* hover / raised */
+    --border:     #243648;
+
+    /* Text */
+    --text:       #E6EDF5;
+    --muted:      #8A9BB0;
+
+    /* Brand + status */
+    --accent:     #4A8EF5;
+    --good:       #2ECC8F;
+    --warn:       #F5A623;
+    --bad:        #F5536D;
+    --violet:     #9B7BFF;
+
+    /* Type — Montserrat if installed, otherwise Windows' own UI font. No font files shipped. */
+    --font: "Montserrat", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+
+    /* Shape + rhythm */
+    --radius: 14px;
+    --gap: 16px;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}

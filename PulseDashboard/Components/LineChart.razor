@@ -1,0 +1,25 @@
+<svg class="line-chart" viewBox="0 0 @W @H" preserveAspectRatio="none" role="img" aria-label="Requests per second over time">
+    <defs>
+        <linearGradient id="trafficFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4A8EF5" stop-opacity="0.35" />
+            <stop offset="100%" stop-color="#4A8EF5" stop-opacity="0" />
+        </linearGradient>
+    </defs>
+
+    @for (var i = 1; i < 5; i++)
+    {
+        <line x1="0" x2="@W" y1="@ChartMath.Num(H / 5.0 * i)" y2="@ChartMath.Num(H / 5.0 * i)"
+              stroke="#243648" stroke-width="1" vector-effect="non-scaling-stroke" />
+    }
+
+    <polygon points="@ChartMath.ToAreaPoints(Values, W, H, 14)" fill="url(#trafficFill)" />
+    <polyline points="@ChartMath.ToPoints(Values, W, H, 14)" fill="none" stroke="#4A8EF5" stroke-width="2.5"
+              stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+</svg>
+
+@code {
+    private const int W = 600;
+    private const int H = 220;
+
+    [Parameter, EditorRequired] public IReadOnlyList<double> Values { get; set; } = Array.Empty<double>();
+}

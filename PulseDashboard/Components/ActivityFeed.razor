@@ -1,0 +1,16 @@
+<ul class="feed">
+    @foreach (var item in Items)
+    {
+        <li @key="item.Id" class="feed-item feed-@item.Kind.ToString().ToLowerInvariant()">
+            <span class="feed-dot"></span>
+            <div>
+                <p>@item.Message</p>
+                <time>@item.Time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)</time>
+            </div>
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<ActivityItem> Items { get; set; } = Array.Empty<ActivityItem>();
+}

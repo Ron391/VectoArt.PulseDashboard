@@ -1,0 +1,11 @@
+<svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+    <polygon points="@ChartMath.ToAreaPoints(Values, 100, 32)" fill="@Color" fill-opacity="0.14" />
+    <polyline points="@ChartMath.ToPoints(Values, 100, 32)" fill="none" stroke="@Color" stroke-width="2"
+              stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+</svg>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<double> Values { get; set; } = Array.Empty<double>();
+
+    [Parameter] public string Color { get; set; } = "#4A8EF5";
+}

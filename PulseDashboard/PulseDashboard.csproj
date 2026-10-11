@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <!--
+    ARCH 1 — The SDK line is the whole trick.
+    A plain WPF app uses Microsoft.NET.Sdk. Switching to Microsoft.NET.Sdk.Razor is what
+    teaches the project to compile .razor files AND to serve everything under wwwroot/.
+    Do NOT add your own <Content Include="wwwroot\**" /> group: the Razor SDK already does it,
+    and a duplicate item group is one of the classic "stuck on Loading..." causes.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>PulseDashboard</RootNamespace>
+    <AssemblyName>PulseDashboard</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <!-- Microsoft's own BlazorWebView for WPF (MIT). Floating 8.0.* so you always get the latest 8.0 patch; pin it for production. -->
+	  <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="8.0.*" />
+    <!-- Used by the "before" window's view-model only. The Blazor side needs no MVVM library. -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+  </ItemGroup>
+
+</Project>

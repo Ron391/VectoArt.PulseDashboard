@@ -1,0 +1,12 @@
+<div class="meter-row">
+    <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@Value">
+        <div class="meter-fill @Tone" style="width:@(ChartMath.Num(Value))%"></div>
+    </div>
+    <span class="meter-num">@Value.ToString("0", CultureInfo.InvariantCulture)%</span>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public double Value { get; set; }
+
+    private string Tone => Value > 85 ? "bad" : Value > 70 ? "warn" : "ok";
+}

@@ -1,0 +1,20 @@
+<article class="card kpi" style="--kpi:@Metric.Accent">
+    <header class="kpi-head">
+        <span class="kpi-label">@Metric.Label</span>
+        <span class="delta @DeltaClass">@DeltaText</span>
+    </header>
+    <div class="kpi-value">@Metric.Value</div>
+    <Sparkline Values="Metric.Trend" Color="@Metric.Accent" />
+</article>
+
+@code {
+    [Parameter, EditorRequired] public KpiMetric Metric { get; set; } = default!;
+
+    // "Good" depends on the metric: revenue going up is good, latency going up is bad.
+    private bool IsGood => Metric.LowerIsBetter ? Metric.ChangePercent <= 0 : Metric.ChangePercent >= 0;
+
+    private string DeltaClass => IsGood ? "good" : "bad";
+
+    private string DeltaText =>
+        (Metric.ChangePercent >= 0 ? "▲ " : "▼ ") + Math.Abs(Metric.ChangePercent).ToString("0.0", CultureInfo.InvariantCulture) + "%";
+}

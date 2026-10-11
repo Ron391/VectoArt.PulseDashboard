@@ -1,0 +1,27 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Server</th>
+            <th>Region</th>
+            <th>CPU</th>
+            <th>Memory</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var server in Servers)
+        {
+            <tr @key="server.Name">
+                <td class="strong">@server.Name</td>
+                <td class="muted">@server.Region</td>
+                <td><Meter Value="server.Cpu" /></td>
+                <td><Meter Value="server.Memory" /></td>
+                <td><span class="pill pill-@server.Status.ToString().ToLowerInvariant()">@server.Status</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<ServerNode> Servers { get; set; } = Array.Empty<ServerNode>();
+}

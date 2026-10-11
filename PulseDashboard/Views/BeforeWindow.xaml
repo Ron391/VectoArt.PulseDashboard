@@ -1,0 +1,32 @@
+<Window x:Class="PulseDashboard.Views.BeforeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:PulseDashboard.ViewModels"
+        Title="BEFORE — the same dashboard with stock WPF controls"
+        Width="1000" Height="640"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:BeforeViewModel />
+    </Window.DataContext>
+
+    <!-- Deliberately unstyled. This is what you get from default WPF controls, and what we fix in the main window. -->
+    <DockPanel Margin="8">
+        <GroupBox Header="Key metrics" DockPanel.Dock="Top">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Revenue: " /><TextBlock Text="{Binding Revenue}" Margin="0,0,24,0" />
+                <TextBlock Text="Users: " /><TextBlock Text="{Binding Users}" Margin="0,0,24,0" />
+                <TextBlock Text="Orders: " /><TextBlock Text="{Binding Orders}" Margin="0,0,24,0" />
+                <TextBlock Text="Latency: " /><TextBlock Text="{Binding Latency}" />
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Recent activity" DockPanel.Dock="Bottom" Height="180">
+            <ListBox ItemsSource="{Binding Activity}" DisplayMemberPath="Message" />
+        </GroupBox>
+
+        <GroupBox Header="Servers">
+            <DataGrid ItemsSource="{Binding Servers}" IsReadOnly="True" AutoGenerateColumns="True" />
+        </GroupBox>
+    </DockPanel>
+</Window>
